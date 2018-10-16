@@ -1,0 +1,53 @@
+﻿
+<canvas id="canvas"></canvas>
+
+
+<script src="~/build/pdf.js"></script>
+<script src="~/build/pdf.worker.js"></script>
+<script>
+
+    if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = (function () {
+            return window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame ||
+                window.oRequestAnimationFrame ||
+                window.msRequestAnimationFrame ||
+                function (callback, element) {
+                    window.setTimeout(callback, 1000 / 60);
+                };
+        })();
+    }
+
+
+    //PDFJS.disableStream = true;
+
+    PDFJS.getDocument("@Url.Content("/home/GetPdf")").then(function (pdfFile) {
+        var pageNumber = 1;
+
+        pdfFile.getPage(pageNumber).then(function (page) {
+                
+            var scale = 1.2;
+            var viewport = page.getViewport(scale);
+
+
+            var canvas = document.getElementById('canvas');
+          
+
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            var context = canvas.getContext('2d');
+
+            var renderContext = {
+                canvasContext: context,
+                viewport: viewport
+            };
+
+            page.render(renderContext);
+        });
+    });
+
+
+
+
+</script>
